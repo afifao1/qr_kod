@@ -1,5 +1,9 @@
 <?php
+require 'vendor/autoload.php';
 
+use chillerlan\QRCode\QRCode;
+
+$data = $_POST['data'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -10,10 +14,12 @@
 </head>
 <body>
     <h1>QR skaner</h1>
-    <form action="">
-    <img src="https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=http%3A%2F%2Fwww.google.com%2F&choe=UTF-8" title="Link to Google.com" />
-        <input type="text" placeholder ="enter link or text">
-        <button type="submit">Send</button>
+    <form action="" method="POST">
+    <input type="text" placeholder ="enter link or text" name="data">
+    <button type="submit">Send</button><br>
+    <?php
+        echo '<img src="'.(new QRCode)->render($data).'" alt="QR Code" width ="200" height=200"/>';
+    ?>
     </form>
 </body>
 </html>
