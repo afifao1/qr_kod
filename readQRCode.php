@@ -24,7 +24,7 @@ var_dump($result);
 </head>
 <body>
     <h1>Read QRCode</h1>
-    <form action="" method="POST">
+    <form action="reader.php" method="POST" enctype="multipart/form-data">
         <input type="file" name="read">
         <button type="submit">Send</button><br>
         <?php $result = (new QRCode())->readFromFile('image.png');
