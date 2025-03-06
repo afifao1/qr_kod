@@ -6,6 +6,12 @@ use chillerlan\QRCode\QRCode;
 $data = $_POST['data'];
 (new QRCode)->render($data,'file.svg');
 
+$result = (new QRCode)->readFromFile('file.svg');
+
+	$content = $result->data;
+	$matrix  = $result->getMatrix(); 
+
+	$content = (string)$result;
 ?>
 <!DOCTYPE html>
 <html lang="en">
