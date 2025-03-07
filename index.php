@@ -3,10 +3,7 @@ require 'vendor/autoload.php';
 
 use chillerlan\QRCode\QRCode;
 
-require 'readQRCode.php';
-// exit();
-$data = $_POST['data'];
-(new QRCode)->render($data,'file.svg');
+require 'controllers/Web.php';
 
 ?>
 <!DOCTYPE html>
@@ -19,11 +16,27 @@ $data = $_POST['data'];
 <body>
     <h1>QR skaner</h1>
     <form action="" method="POST">
-    <input type="text" placeholder ="Enter link or text" name="data">
+    <input type="text" placeholder ="Enter link or text" name="text">
     <button type="submit">Send</button><br>
     <?php
-        echo '<img src="'.(new QRCode)->render($data).'" alt="QR Code" width ="200" height=200"/>';
+        $text = $_POST['text'];
+        $web = new Web();
+        $web->createQRCode($text);
+        echo '<img src="'.(new QRCode)->render($text).'" alt="QR Code" width ="200" height=200"/>';
+
     ?>
+    </form>
+    <h2>Read QRCode</h2>
+    <form action="" method="POST" enctype="multipart/form-data">
+        <input type="file" name="read">
+        <button type="submit">Send</button><br>
+        <?php
+        $result=(new QRCode())->readFromFile('qr.jpg');
+        $content = $result->data;
+        $web = new Web();
+        $web->readQRCode($content);
+        echo ($content);
+        ?>
     </form>
 </body>
 </html>
