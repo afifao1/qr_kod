@@ -3,16 +3,10 @@ require 'vendor/autoload.php';
 
 use chillerlan\QRCode\QRCode;
 
-// try{
-// 	$result = (new QRCode())->readFromFile('image.png'); 
-//     echo ($result->data);
-// }
-// catch(Throwable $e){
-//     print_r($e);
-// }
+$tmp_name=$_FILES['read']['tmp_name'];
 
-$result=$_POST['read'];
-var_dump($result);
+move_uploaded_file($tmp_name,'qr.jpg');
+
 ?>
 
 <!DOCTYPE html>
@@ -24,11 +18,13 @@ var_dump($result);
 </head>
 <body>
     <h1>Read QRCode</h1>
-    <form action="reader.php" method="POST" enctype="multipart/form-data">
+    <form action="" method="POST" enctype="multipart/form-data">
         <input type="file" name="read">
         <button type="submit">Send</button><br>
-        <?php $result = (new QRCode())->readFromFile('image.png');
-        echo ($result->data);
+        <?php
+        $result=(new QRCode())->readFromFile('qr.jpg');
+        $content = $result->data;
+        echo ($content);
         ?>
     </form>
 </body>
