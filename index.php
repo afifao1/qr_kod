@@ -1,9 +1,12 @@
 <?php
+// ini_set('display_errors',1);
 require 'vendor/autoload.php';
 
 use chillerlan\QRCode\QRCode;
 
 require 'controllers/Web.php';
+
+use  Controllers\Web\Web;
 
 ?>
 <!DOCTYPE html>
