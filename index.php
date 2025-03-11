@@ -1,12 +1,14 @@
 <?php
-// ini_set('display_errors',1);
 require 'vendor/autoload.php';
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+require 'routes.php';
+exit();
+
 use chillerlan\QRCode\QRCode;
-
-require 'controllers/Web.php';
-
-use  Controllers\Web;
+use Controllers\Web;
 
 ?>
 <!DOCTYPE html>
