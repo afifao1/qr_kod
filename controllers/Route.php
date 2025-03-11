@@ -8,7 +8,7 @@ class Route {
     $update = file_get_contents('php://input');
 
     if($update){
-        //(new Bot($_ENV['TOKEN']))->handle($update);
+        (new Bot($_ENV['TOKEN']))->handle($update);
     }
   }
 
