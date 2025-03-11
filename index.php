@@ -6,7 +6,7 @@ use chillerlan\QRCode\QRCode;
 
 require 'controllers/Web.php';
 
-use  Controllers\Web\Web;
+use  Controllers\Web;
 
 ?>
 <!DOCTYPE html>
