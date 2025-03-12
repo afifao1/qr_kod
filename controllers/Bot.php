@@ -8,8 +8,9 @@ use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
 
 class Bot{
-    public  string $text;
+    public  ?string $text;
     public  int    $chatId;
+    public         $img;
     public  string $firstName;
 
     private string $api;
@@ -27,23 +28,43 @@ class Bot{
         $this->chatId    = $update->message->chat->id;
         $this->firstName = $update->message->chat->first_name;
 
-        if(strpos($this->text, '/') === 0){
-            $string     = explode(' ',$this->text,2);
-            $this->text = $string[1] ?? $string[0];
-            $command    = $string[0];
-        }
 
-        match ($command) {
-            '/start'    => $this->handleStartCommand() ,
-            '/generate' => $this->handleGenerateCommand(),
-        };
+        if (isset($update->message->photo)){
+            $this->img = end($update->message->photo)->file_id;
+        }
+        if($this->text) {
+
+            if(strpos($this->text, '/') === 0){
+                $string     = explode(' ',$this->text,2);
+                $this->text = $string[1] ?? $string[0];
+                $command    = $string[0];
+            }
+        }else {
+            if (!empty($this->img)){
+                $this->handleReadCommand();
+            }
+        }
+            
+            // match ($command) {
+                //     '/start'    => $this->handleStartCommand() ,
+        //     '/generate' => $this->handleGenerateCommand(),
+        //     '/read'     => $this->handleReadCommand(),
+        // };
+        if($command === '/start'){
+            $this->handleStartCommand();
+        }
+        elseif ($command === '/generate'){
+            $this->handleGenerateCommand();
+        } 
+
     }
 
     public function handleStartCommand(){
         $text  = "Assalomu aleykum $this->firstName";
         $text .= "\n\nBotimizga xush kelibsiz!";
         $text .= "\n\nBotdan foydalanish uchun quyidagi buyruqlardan birini tanlang:";
-        $text .= "\n\n\generate - QRCode generatsiya qilish";
+        $text .= "\n\n/generate - QRCode generatsiya qilish";
+        $text .= "\n\n/read - QRCodeni o`qish";
 
         $this->http->post('sendMessage',[
             'form_params' => [
@@ -72,6 +93,15 @@ class Bot{
                 ]
             ]
                 ]);
+    }
+
+    public function handleReadCommand(){
+        $this->http->post('sendMessage',[
+            'form_params' => [
+                'chat_id' => $this->chatId,
+                'text'    => "Salom bu rasm"
+            ]
+            ]);
     }
 
     public function setWebhook (string $url){
