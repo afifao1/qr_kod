@@ -1,45 +1,14 @@
 <?php
-// ini_set('display_errors',1);
+declare(strict_types=1);
 require 'vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
-use chillerlan\QRCode\QRCode;
+echo "test";
+require 'routes.php';
 
-require 'controllers/Web.php';
+exit();
 
-use  Controllers\Web;
+// require 'Views/view.php';
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>QR skaner</h1>
-    <form action="" method="POST">
-    <input type="text" placeholder ="Enter link or text" name="text">
-    <button type="submit">Send</button><br>
-    <?php
-        $text = $_POST['text'];
-        $web = new Web();
-        $web->createQRCode($text);
-        echo '<img src="'.(new QRCode)->render($text).'" alt="QR Code" width ="200" height=200"/>';
-
-    ?>
-    </form>
-    <h2>Read QRCode</h2>
-    <form action="" method="POST" enctype="multipart/form-data">
-        <input type="file" name="read">
-        <button type="submit">Send</button><br>
-        <?php
-        $result=(new QRCode())->readFromFile('qr.jpg');
-        $content = $result->data;
-        $web = new Web();
-        $web->readQRCode($content);
-        echo ($content);
-        ?>
-    </form>
-</body>
-</html>
