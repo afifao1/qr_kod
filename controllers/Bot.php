@@ -134,10 +134,16 @@ class Bot{
 
         $download = "https://api.telegram.org/file/bot$this->token/$file_path";
 
+        $png = file_get_contents($download);
+        file_put_contents('qrcode.png', $png);
+
+        $result=(new QRCode())->readFromFile('qrcode.png');
+        $content = $result->data;
+
         $this->http->post('sendMessage',[
             'form_params' => [
                 'chat_id' => $this->chatId,
-                'text'    => print_r($download,true),
+                'text'    => $content,
                 'file_id' => $this->img
             ]
             ]);
