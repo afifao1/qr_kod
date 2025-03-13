@@ -12,52 +12,78 @@ class Bot{
     public  int    $chatId;
     public         $img;
     public  string $firstName;
+    public         $token;
 
     private string $api;
     private        $http;
 
     public function __construct(string $token){
-        $this->api  = "https://api.telegram.org/bot$token/";
-        $this->http = new Client(['base_uri' => $this->api]);
+        $this->api   = "https://api.telegram.org/bot$token/";
+        $this->http  = new Client(['base_uri' => $this->api]);
+        $this->token = $token;
     }
-
+    
     public function handle(string $update){
         $update = json_decode($update);
-
-        $this->text      = $update->message->text;
-        $this->chatId    = $update->message->chat->id;
-        $this->firstName = $update->message->chat->first_name;
-
-
-        if (isset($update->message->photo)){
-            $this->img = end($update->message->photo)->file_id;
+        
+        if (isset($update->message->text)){
+            $this->text      = $update->message->text;
+            $this->chatId    = $update->message->chat->id;
+            $this->firstName = $update->message->chat->first_name;
+            $this->handleTextCommand();
         }
-        if($this->text) {
-
-            if(strpos($this->text, '/') === 0){
-                $string     = explode(' ',$this->text,2);
-                $this->text = $string[1] ?? $string[0];
-                $command    = $string[0];
-            }
-        }else {
-            if (!empty($this->img)){
-                $this->handleReadCommand();
-            }
+        else{
+            $this->photo      = $update->message->photo;
+            $this->chatId    = $update->message->chat->id;
+            $this->firstName = $update->message->chat->first_name;
+            $this->handlePhotoCommand($update);
         }
+
+        // if (isset($update->message->photo)){
+        //     $this->img = end($update->message->photo)->file_id;
+        // }
+
+        // if($this->text) {
+        //     if(strpos($this->text, '/') === 0){
+        //         $string     = explode(' ',$this->text,2);
+        //         $this->text = $string[1] ?? $string[0];
+        //         $command    = $string[0];
+        //     }
+        // }else {
+        //     if (!empty($this->img)){
+        //         $this->handleReadCommand($token);
+        //     }
+        // }
             
-            // match ($command) {
-                //     '/start'    => $this->handleStartCommand() ,
-        //     '/generate' => $this->handleGenerateCommand(),
-        //     '/read'     => $this->handleReadCommand(),
-        // };
+        // if($command === '/start'){
+        //     $this->handleStartCommand();
+        // }
+        // elseif ($command === '/generate'){
+        //     $this->handleGenerateCommand();
+        // } 
+
+    }
+
+    public function handleTextCommand(){
+        if(strpos($this->text, '/') === 0){
+            $string     = explode(' ', $this->text,2);
+            $this->text = $string[1] ?? $string[0];
+            $command    = $string[0];
+        }
+
         if($command === '/start'){
             $this->handleStartCommand();
         }
         elseif ($command === '/generate'){
             $this->handleGenerateCommand();
         } 
-
     }
+
+    public function handlePhotoCommand($update){
+            $this->img = end($update->message->photo)->file_id;
+            $this->handleReadCommand();
+        }
+    
 
     public function handleStartCommand(){
         $text  = "Assalomu aleykum $this->firstName";
@@ -96,14 +122,29 @@ class Bot{
     }
 
     public function handleReadCommand(){
+
+
+        $responce = $this->http->post('getFile',[
+            'form_params' => [
+                'file_id' => $this->img
+            ]
+            ]);
+
+        $file_path = json_decode($responce->getBody()->getContents())->result->file_path;
+
+        $download = "https://api.telegram.org/file/bot$this->token/$file_path";
+
         $this->http->post('sendMessage',[
             'form_params' => [
                 'chat_id' => $this->chatId,
-                'text'    => "Salom bu rasm"
+                'text'    => print_r($download,true),
+                'file_id' => $this->img
             ]
             ]);
-    }
+        
 
+    }
+    
     public function setWebhook (string $url){
         try{
             $response = $this->http->post('setWebhook',[
@@ -121,4 +162,5 @@ class Bot{
             return $e->getMessage();
         }
     }
+
 }
