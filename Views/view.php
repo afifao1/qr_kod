@@ -21,7 +21,7 @@ use  Controllers\Web;
     <?php
         $text = $_POST['text'];
         $web = new Web();
-        $web->createQRCode($text);
+        $web->handleGenerateCommand($text);
         echo '<img src="'.(new QRCode)->render($text).'" alt="QR Code" width ="200" height=200"/>';
 
     ?>
@@ -34,7 +34,7 @@ use  Controllers\Web;
         $result=(new QRCode())->readFromFile('qr.jpg');
         $content = $result->data;
         $web = new Web();
-        $web->readQRCode($content);
+        $web->handleReadCommand($content);
         echo ($content);
         ?>
     </form>

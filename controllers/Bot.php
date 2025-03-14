@@ -7,7 +7,7 @@ use GuzzleHttp\Client;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
 
-class Bot{
+class Bot implements QRCodeInterface{
     public  ?string $text;
     public  int    $chatId;
     public         $img;
@@ -39,29 +39,6 @@ class Bot{
             $this->handlePhotoCommand($update);
         }
 
-        // if (isset($update->message->photo)){
-        //     $this->img = end($update->message->photo)->file_id;
-        // }
-
-        // if($this->text) {
-        //     if(strpos($this->text, '/') === 0){
-        //         $string     = explode(' ',$this->text,2);
-        //         $this->text = $string[1] ?? $string[0];
-        //         $command    = $string[0];
-        //     }
-        // }else {
-        //     if (!empty($this->img)){
-        //         $this->handleReadCommand($token);
-        //     }
-        // }
-            
-        // if($command === '/start'){
-        //     $this->handleStartCommand();
-        // }
-        // elseif ($command === '/generate'){
-        //     $this->handleGenerateCommand();
-        // } 
-
     }
 
     public function handleTextCommand(){
@@ -75,13 +52,13 @@ class Bot{
             $this->handleStartCommand();
         }
         elseif ($command === '/generate'){
-            $this->handleGenerateCommand();
+            $this->handleGenerateCommand($this->text);
         } 
     }
 
     public function handlePhotoCommand($update){
             $this->img = end($update->message->photo)->file_id;
-            $this->handleReadCommand();
+            $this->handleReadCommand($content);
         }
     
 
@@ -100,7 +77,7 @@ class Bot{
             ]);
     }
 
-    public function handleGenerateCommand(){
+    public function handleGenerateCommand($text){
         $options = (new QROptions([
             'outputType' => QRCode::OUTPUT_IMAGE_PNG
         ]));
@@ -121,7 +98,7 @@ class Bot{
                 ]);
     }
 
-    public function handleReadCommand(){
+    public function handleReadCommand($content){
 
 
         $responce = $this->http->post('getFile',[
