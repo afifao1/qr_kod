@@ -32,7 +32,7 @@ class Bot implements QRCodeInterface{
             $this->firstName = $update->message->chat->first_name;
             $this->handleTextCommand();
         }
-        else{
+        elseif(isset($update->message->photo)){
             $this->photo      = $update->message->photo;
             $this->chatId    = $update->message->chat->id;
             $this->firstName = $update->message->chat->first_name;

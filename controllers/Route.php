@@ -11,7 +11,7 @@ class Route {
         }
     }
 
-    // public static function handleWeb(): void {
-    //     print_r((new Web())->index());
-    // }
+    public static function handleWeb(): void {
+        require 'Views/view.php';
+    }
 }
